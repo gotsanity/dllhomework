@@ -40,7 +40,7 @@ namespace DLLHomework
             }
         }
 
-        public Node Add(Metadata data)
+        public Node AddLinear(Metadata data)
         {
             if (data.Gender.ToString().ToLower() == "m")
             {
@@ -48,7 +48,7 @@ namespace DLLHomework
                 {
                     MostPopularMale = data;
                 }
-                
+
                 MaleCount++;
             }
             else
@@ -77,7 +77,7 @@ namespace DLLHomework
                 NodeCount++;
                 return Head;
             }
-            else 
+            else
             {
                 Node current = Head;
                 Node temp = new Node(data);
@@ -104,6 +104,59 @@ namespace DLLHomework
             }
         }
 
+        public Node Add(Metadata data)
+        {
+            if (data.Gender.ToString().ToLower() == "m")
+            {
+                if (MaleCount == 0 || MostPopularMale.Rank < data.Rank)
+                {
+                    MostPopularMale = data;
+                }
+
+                MaleCount++;
+            }
+            else
+            {
+                if (FemaleCount == 0 || MostPopularFemale.Rank < data.Rank)
+                {
+                    MostPopularFemale = data;
+                }
+
+                FemaleCount++;
+            }
+
+            if (Head == null) // new list
+            {
+                Head = new Node(data);
+                NodeCount++;
+                Tail = Head;
+                return Head;
+            }
+            else if (Head.Data >= data) // new head
+            {
+                Node temp = new Node(data);
+                temp.Next = Head;
+                temp.Next.Prev = temp;
+                Head = temp;
+                NodeCount++;
+                return Head;
+            }
+            else // case: insert in middle or new tail
+            {
+                
+                Node temp = new Node(data);
+                Node current = SearchInsertionPoint(temp.Data.Name);
+
+                if (current.Next != null)
+                {
+                    temp.Next = current.Next;
+                }
+                current.Next = temp;
+                temp.Prev = current;
+                NodeCount++;
+                return temp;
+            }
+        }
         public Node Search(string searchTerm)
         {
             Node searchHead = Head;
@@ -123,6 +176,42 @@ namespace DLLHomework
                     return mid;
                 }
                 else if (mid.Data.Name.ToLower().CompareTo(searchTerm.ToLower()) < 0) 
+                {
+                    searchHead = mid.Next;
+                }
+                else
+                {
+                    searchTail = mid;
+                }
+            } while (searchTail == null || searchTail != searchHead);
+
+            return null;
+        }
+
+        public Node SearchInsertionPoint(string searchTerm)
+        {
+            Node searchHead = Head;
+            Node searchTail = null;
+
+            do
+            {
+                Node mid = SeekMiddleNode(searchHead, searchTail);
+
+                if (mid == null)
+                {
+                    return null;
+                }
+
+                if (mid.Next == null)
+                {
+                    return mid;
+                }
+
+                if (mid.Data.Name.ToLower().CompareTo(searchTerm.ToLower()) <= 0 && mid.Next.Data.Name.ToLower().CompareTo(searchTerm.ToLower()) >= 0)
+                {
+                    return mid;
+                }
+                else if (mid.Data.Name.ToLower().CompareTo(searchTerm.ToLower()) <= 0)
                 {
                     searchHead = mid.Next;
                 }
@@ -231,6 +320,17 @@ namespace DLLHomework
             }
 
             return sb.ToString();
+        }
+
+        public void Clear()
+        {
+            NodeCount = 0;
+            MaleCount = 0;
+            FemaleCount = 0;
+            MostPopularMale = null;
+            MostPopularFemale = null;
+            Head = null;
+            Tail = null;
         }
     }
 }

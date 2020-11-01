@@ -12,9 +12,7 @@ namespace DLLHomework
 
         static void Main(string[] args)
         {
-            StartTimer("Started loading data from file");
-            LoadDataFromFile();
-            ShowExecutionTime();
+            LoadDataFromFileBinary();
 
             int userInput = 0;
             do
@@ -47,10 +45,16 @@ namespace DLLHomework
                     case 5: // add a name
                         AddName();
                         break;
-                    case 6:
+                    case 6: // find most popular name by gender
                         FindMostPopularNameByGender();
                         break;
-                    case 7: // exit
+                    case 7: // reload linear
+                        LoadDataFromFileLinear();
+                        break;
+                    case 8: // reload binary
+                        LoadDataFromFileBinary();
+                        break;
+                    case 9: // exit
                         break;
                     default: // handle invalid
                         Console.WriteLine("Invalid Input, Please use numeric choices.");
@@ -59,7 +63,7 @@ namespace DLLHomework
 
                 Console.WriteLine();
 
-            } while (userInput != 7);
+            } while (userInput != 9);
         }
 
         public static int PrintMenu()
@@ -72,7 +76,10 @@ namespace DLLHomework
             Console.WriteLine("4. See count of all male entries");
             Console.WriteLine("5. Add a name");
             Console.WriteLine("6. Find the most popular name by gender");
-            Console.WriteLine("7. Exit");
+            Console.WriteLine("7. Reload data from file using binary search");
+            Console.WriteLine("8. Reload data from file using linear search");
+            Console.WriteLine();
+            Console.WriteLine("9. Exit");
             var result = Console.ReadLine();
             return Convert.ToInt32(result);
         }
@@ -197,8 +204,34 @@ namespace DLLHomework
             }
         }
 
-        private static void LoadDataFromFile()
+        private static void LoadDataFromFileLinear()
         {
+            dll.Clear();
+
+            StartTimer("Started loading data from file using linear searching");
+
+            var nameData = File.ReadAllLines(@"..\..\..\yob2019.txt");
+            var nameList = from item in nameData
+                           let data = item.Split(',')
+                           select new
+                           {
+                               Name = data[0],
+                               Gender = data[1],
+                               Rank = data[2]
+                           };
+
+            foreach (var item in nameList)
+            {
+                dll.AddLinear(new Metadata(item.Name, item.Gender.ToCharArray()[0], int.Parse(item.Rank)));
+            }
+
+            ShowExecutionTime();
+        }
+
+        private static void LoadDataFromFileBinary()
+        {
+            dll.Clear();
+            StartTimer("Started loading data from file using binary search");
             var nameData = File.ReadAllLines(@"..\..\..\yob2019.txt");
             var nameList = from item in nameData
                            let data = item.Split(',')
@@ -213,6 +246,7 @@ namespace DLLHomework
             {
                 dll.Add(new Metadata(item.Name, item.Gender.ToCharArray()[0], int.Parse(item.Rank)));
             }
+            ShowExecutionTime();
         }
     }
 }

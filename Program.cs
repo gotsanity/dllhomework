@@ -210,7 +210,7 @@ namespace DLLHomework
 
             StartTimer("Started loading data from file using linear searching");
 
-            var nameData = File.ReadAllLines(@"..\..\..\yob2019.txt");
+            var nameData = File.ReadAllLines(System.Environment.CurrentDirectory + @"\yob2019.txt");
             var nameList = from item in nameData
                            let data = item.Split(',')
                            select new
@@ -232,7 +232,7 @@ namespace DLLHomework
         {
             dll.Clear();
             StartTimer("Started loading data from file using binary search");
-            var nameData = File.ReadAllLines(@"..\..\..\yob2019.txt");
+            var nameData = File.ReadAllLines(System.Environment.CurrentDirectory + @"\yob2019.txt");
             var nameList = from item in nameData
                            let data = item.Split(',')
                            select new
